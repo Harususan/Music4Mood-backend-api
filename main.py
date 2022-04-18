@@ -45,7 +45,7 @@ async def predict(file: UploadFile = File(...)):
     Predictions = MODEL.predict(final_image)
     p = CLASS_NAMES[np.argmax(Predictions[0])]
 
-    return p 
+    return {"Emotion" : p } 
 
 
 if __name__ == '__main__':
