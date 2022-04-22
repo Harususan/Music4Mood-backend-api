@@ -9,7 +9,7 @@ import cv2
 app = FastAPI()
 
 MODEL = tf.keras.models.load_model('models\elon_musk_amar_rahe.h5')
-CLASS_NAMES = ['1','2','3']
+CLASS_NAMES = ['neutral','happy','sad']
 
 @app.get('/ping')
 async def index():
@@ -26,6 +26,7 @@ async def predict(file: UploadFile = File(...)):
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
     faces = faceCascade.detectMultiScale(gray,1.1,4)
+    face_roi = None
     for x, y, w, h in faces:
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = image[y:y+h, x:x+w]
@@ -38,7 +39,7 @@ async def predict(file: UploadFile = File(...)):
                 face_roi = roi_color[ey:(ey+eh), ex:(ex+eh)]
     
     img_size = 224
-    final_image = cv2.resize(image,(img_size,img_size))
+    final_image = cv2.resize(face_roi,(img_size,img_size))
     final_image = np.expand_dims(final_image,axis= 0)
     final_image = final_image/255.0
 
